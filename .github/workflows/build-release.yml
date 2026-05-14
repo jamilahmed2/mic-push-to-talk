@@ -1,0 +1,89 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+    
+    - name: Restore dependencies
+      run: dotnet restore MicPushToTalk/MicPushToTalk.csproj
+    
+    - name: Build
+      run: dotnet build MicPushToTalk/MicPushToTalk.csproj -c Release --no-restore
+    
+    - name: Publish self-contained
+      run: |
+        dotnet publish MicPushToTalk/MicPushToTalk.csproj `
+          -c Release `
+          -r win-x64 `
+          --self-contained true `
+          -p:PublishSingleFile=true `
+          -p:IncludeNativeLibrariesForSelfExtract=true `
+          -p:PublishReadyToRun=true `
+          -o ./publish/MicPushToTalk
+    
+    - name: Copy documentation
+      run: |
+        Copy-Item README.md ./publish/MicPushToTalk/
+        Copy-Item INSTALLATION.md ./publish/MicPushToTalk/
+        Copy-Item QUICK-START.md ./publish/MicPushToTalk/
+        Copy-Item LICENSE.txt ./publish/MicPushToTalk/
+    
+    - name: Create ZIP archive
+      run: |
+        $version = "${{ github.ref_name }}"
+        Compress-Archive -Path ./publish/MicPushToTalk/* -DestinationPath "./MicPushToTalk-$version-win-x64.zip"
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: MicPushToTalk-win-x64
+        path: ./MicPushToTalk-*.zip
+    
+    - name: Create Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ./MicPushToTalk-*.zip
+        body: |
+          ## Mic Push-To-Talk ${{ github.ref_name }}
+          
+          ### Download
+          - **MicPushToTalk-${{ github.ref_name }}-win-x64.zip** - Portable version (no installation required)
+          
+          ### What's New
+          See [CHANGELOG.md](CHANGELOG.md) for details.
+          
+          ### Installation
+          1. Download the ZIP file
+          2. Extract to any folder
+          3. Run `MicPushToTalk.exe`
+          4. No .NET installation required!
+          
+          ### System Requirements
+          - Windows 10 (1809+) or Windows 11
+          - 64-bit (x64)
+          - ~100 MB disk space
+          
+          ### Quick Start
+          - Default hotkey: **Left Alt**
+          - Hold to talk, release to mute
+          - Right-click tray icon for settings
+          
+          For full documentation, see [README.md](README.md)
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

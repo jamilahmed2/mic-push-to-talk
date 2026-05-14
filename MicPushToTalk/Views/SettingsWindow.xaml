@@ -1,0 +1,231 @@
+<Window x:Class="MicPushToTalk.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Mic Push-To-Talk Settings"
+        Width="520" Height="680"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        MouseDown="Window_MouseDown">
+    
+    <Border Style="{StaticResource GlassPanel}" Margin="15">
+        <Grid Margin="25">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header with Close Button -->
+            <Grid Grid.Row="0" Margin="0,0,0,20">
+                <TextBlock Text="Settings" 
+                           FontSize="32" 
+                           FontWeight="Bold" 
+                           Foreground="White"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+                
+                <!-- Close Button -->
+                <Button Content="✕" 
+                        Width="32" Height="32"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        FontSize="18"
+                        FontWeight="Bold"
+                        Foreground="White"
+                        Background="#30FFFFFF"
+                        BorderBrush="#40FFFFFF"
+                        BorderThickness="1"
+                        Cursor="Hand"
+                        Click="CloseButton_Click">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="16">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#50FF4444"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter Property="Background" Value="#70FF4444"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                
+                <Rectangle Height="1" 
+                           Fill="#30FFFFFF" 
+                           Margin="0,45,0,0"
+                           VerticalAlignment="Bottom"/>
+            </Grid>
+
+            <!-- Settings Content -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,10,0,0">
+                <StackPanel>
+                    <!-- Hotkey Section -->
+                    <TextBlock Text="Hotkey" 
+                               FontSize="16" 
+                               FontWeight="SemiBold" 
+                               Foreground="#CCFFFFFF" 
+                               Margin="0,5,0,8"/>
+                    
+                    <Grid Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <TextBox x:Name="HotkeyTextBox"
+                                 Style="{StaticResource GlassTextBox}"
+                                 IsReadOnly="True"
+                                 Text="{Binding HotkeyDisplayName, Mode=OneWay}"/>
+                        
+                        <Button Grid.Column="1" 
+                                Content="Change" 
+                                Style="{StaticResource GlassButton}"
+                                Margin="10,0,0,0"
+                                Click="ChangeHotkey_Click"/>
+                    </Grid>
+
+                    <!-- Mode Section -->
+                    <TextBlock Text="Mode" 
+                               FontSize="16" 
+                               FontWeight="SemiBold" 
+                               Foreground="#CCFFFFFF" 
+                               Margin="0,5,0,8"/>
+                    
+                    <CheckBox x:Name="PushToTalkCheckBox"
+                              Content="Push-To-Talk (hold key to talk)"
+                              Style="{StaticResource GlassCheckBox}"
+                              IsChecked="{Binding IsPushToTalkMode}"
+                              Margin="0,0,0,20"/>
+
+                    <!-- Microphone Section -->
+                    <TextBlock Text="Microphone" 
+                               FontSize="16" 
+                               FontWeight="SemiBold" 
+                               Foreground="#CCFFFFFF" 
+                               Margin="0,5,0,8"/>
+                    
+                    <ComboBox x:Name="MicrophoneComboBox"
+                              Style="{StaticResource GlassComboBox}"
+                              ItemsSource="{Binding AvailableMicrophones}"
+                              SelectedItem="{Binding SelectedMicrophone}"
+                              Margin="0,0,0,20"/>
+
+                    <!-- Overlay Size -->
+                    <TextBlock Text="Overlay Size" 
+                               FontSize="16" 
+                               FontWeight="SemiBold" 
+                               Foreground="#CCFFFFFF" 
+                               Margin="0,5,0,8"/>
+                    
+                    <Grid Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <Slider x:Name="SizeSlider"
+                                Style="{StaticResource ModernSlider}"
+                                Minimum="60"
+                                Maximum="150"
+                                Value="{Binding OverlaySize}"
+                                TickFrequency="10"
+                                IsSnapToTickEnabled="True"/>
+                        
+                        <TextBlock Grid.Column="1" 
+                                   Text="{Binding OverlaySize, StringFormat={}{0:F0}px}"
+                                   Foreground="White"
+                                   VerticalAlignment="Center"
+                                   Margin="10,0,0,0"
+                                   Width="50"/>
+                    </Grid>
+
+                    <!-- Overlay Opacity -->
+                    <TextBlock Text="Overlay Opacity" 
+                               FontSize="16" 
+                               FontWeight="SemiBold" 
+                               Foreground="#CCFFFFFF" 
+                               Margin="0,5,0,8"/>
+                    
+                    <Grid Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <Slider x:Name="OpacitySlider"
+                                Style="{StaticResource ModernSlider}"
+                                Minimum="0.3"
+                                Maximum="1.0"
+                                Value="{Binding OverlayOpacity}"
+                                TickFrequency="0.1"
+                                IsSnapToTickEnabled="True"/>
+                        
+                        <TextBlock Grid.Column="1" 
+                                   Text="{Binding OverlayOpacity, StringFormat={}{0:P0}}"
+                                   Foreground="White"
+                                   VerticalAlignment="Center"
+                                   Margin="10,0,0,0"
+                                   Width="50"/>
+                    </Grid>
+
+                    <!-- Additional Options -->
+                    <TextBlock Text="Options" 
+                               FontSize="16" 
+                               FontWeight="SemiBold" 
+                               Foreground="#CCFFFFFF" 
+                               Margin="0,5,0,8"/>
+                    
+                    <CheckBox Content="Snap to screen edges"
+                              Style="{StaticResource GlassCheckBox}"
+                              IsChecked="{Binding SnapToEdges}"
+                              Margin="0,0,0,10"/>
+                    
+                    <CheckBox Content="Show volume visualizer"
+                              Style="{StaticResource GlassCheckBox}"
+                              IsChecked="{Binding ShowVolumeVisualizer}"
+                              Margin="0,0,0,10"/>
+                    
+                    <CheckBox Content="Start on boot"
+                              Style="{StaticResource GlassCheckBox}"
+                              IsChecked="{Binding StartOnBoot}"
+                              Margin="0,0,0,20"/>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Footer Buttons -->
+            <Grid Grid.Row="2" Margin="0,20,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <Button Content="Save" 
+                        Style="{StaticResource GlassButton}"
+                        Click="Save_Click"
+                        Margin="0,0,5,0"/>
+                
+                <Button Grid.Column="1" 
+                        Content="Cancel" 
+                        Style="{StaticResource GlassButton}"
+                        Click="Cancel_Click"
+                        Margin="5,0,0,0"/>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

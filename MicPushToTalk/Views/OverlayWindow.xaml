@@ -1,0 +1,157 @@
+<Window x:Class="MicPushToTalk.Views.OverlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Mic Push-To-Talk"
+        Width="130" Height="130"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize"
+        MouseDown="Window_MouseDown">
+    
+    <Grid>
+        <!-- Close Button (top-right) -->
+        <Button x:Name="CloseButton"
+                Content="✕"
+                Width="24" Height="24"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Margin="0,-5,-5,0"
+                FontSize="12"
+                FontWeight="Bold"
+                Foreground="White"
+                Background="#60000000"
+                BorderBrush="#80FFFFFF"
+                BorderThickness="1"
+                Cursor="Hand"
+                Opacity="0"
+                Click="CloseButton_Click"
+                MouseEnter="CloseButton_MouseEnter"
+                MouseLeave="CloseButton_MouseLeave">
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="12">
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="Black" Opacity="0.5" BlurRadius="8" ShadowDepth="2"/>
+                                    </Border.Effect>
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+        </Button>
+        <!-- Outer glow ring (animated) -->
+        <Ellipse x:Name="GlowRing" 
+                 Width="120" Height="120"
+                 Opacity="0">
+            <Ellipse.Fill>
+                <RadialGradientBrush>
+                    <GradientStop Color="#80FF88" Offset="0.6"/>
+                    <GradientStop Color="#4000FF88" Offset="0.8"/>
+                    <GradientStop Color="Transparent" Offset="1"/>
+                </RadialGradientBrush>
+            </Ellipse.Fill>
+        </Ellipse>
+
+        <!-- Main glass circle -->
+        <Ellipse x:Name="MainCircle" 
+                 Width="90" Height="90"
+                 Cursor="Hand"
+                 MouseLeftButtonDown="MainCircle_Click">
+            <Ellipse.Fill>
+                <RadialGradientBrush>
+                    <GradientStop Color="#60000000" Offset="0"/>
+                    <GradientStop Color="#80000000" Offset="0.7"/>
+                    <GradientStop Color="#50000000" Offset="1"/>
+                </RadialGradientBrush>
+            </Ellipse.Fill>
+            <Ellipse.Stroke>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#80FFFFFF" Offset="0"/>
+                    <GradientStop Color="#40FFFFFF" Offset="0.5"/>
+                    <GradientStop Color="#20FFFFFF" Offset="1"/>
+                </LinearGradientBrush>
+            </Ellipse.Stroke>
+            <Ellipse.StrokeThickness>2</Ellipse.StrokeThickness>
+            <Ellipse.Effect>
+                <DropShadowEffect x:Name="MainShadow" 
+                                  Color="Black" 
+                                  Opacity="0.8" 
+                                  BlurRadius="25" 
+                                  ShadowDepth="6"/>
+            </Ellipse.Effect>
+        </Ellipse>
+
+        <!-- Microphone icon -->
+        <Viewbox Width="45" Height="45">
+            <Canvas Width="24" Height="24">
+                <!-- Mic body -->
+                <Path x:Name="MicIcon" 
+                      Data="M12,2 C10.34,2 9,3.34 9,5 L9,11 C9,12.66 10.34,14 12,14 C13.66,14 15,12.66 15,11 L15,5 C15,3.34 13.66,2 12,2 Z M17,11 C17,13.76 14.76,16 12,16 C9.24,16 7,13.76 7,11 L5,11 C5,14.53 7.61,17.43 11,17.92 L11,21 L13,21 L13,17.92 C16.39,17.43 19,14.53 19,11 L17,11 Z"
+                      Fill="#FF4444"
+                      Stroke="#FFFFFF"
+                      StrokeThickness="0.3"/>
+                
+                <!-- Mute cross line (visible when muted) -->
+                <Line x:Name="MuteLine"
+                      X1="3" Y1="3" X2="21" Y2="21"
+                      Stroke="#FF4444"
+                      StrokeThickness="3"
+                      StrokeStartLineCap="Round"
+                      StrokeEndLineCap="Round"
+                      Opacity="1">
+                    <Line.Effect>
+                        <DropShadowEffect Color="Black" Opacity="0.6" BlurRadius="4" ShadowDepth="1"/>
+                    </Line.Effect>
+                </Line>
+            </Canvas>
+        </Viewbox>
+
+        <!-- Volume visualizer bars -->
+        <StackPanel x:Name="VolumeVisualizer" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,0,8"
+                    Opacity="0">
+            <Rectangle x:Name="Bar1" Width="4" Height="6" Fill="#00FF88" Margin="1.5" RadiusX="2" RadiusY="2">
+                <Rectangle.Effect>
+                    <DropShadowEffect Color="#00FF88" Opacity="0.8" BlurRadius="4" ShadowDepth="0"/>
+                </Rectangle.Effect>
+            </Rectangle>
+            <Rectangle x:Name="Bar2" Width="4" Height="10" Fill="#00FF88" Margin="1.5" RadiusX="2" RadiusY="2">
+                <Rectangle.Effect>
+                    <DropShadowEffect Color="#00FF88" Opacity="0.8" BlurRadius="4" ShadowDepth="0"/>
+                </Rectangle.Effect>
+            </Rectangle>
+            <Rectangle x:Name="Bar3" Width="4" Height="14" Fill="#00FF88" Margin="1.5" RadiusX="2" RadiusY="2">
+                <Rectangle.Effect>
+                    <DropShadowEffect Color="#00FF88" Opacity="0.8" BlurRadius="4" ShadowDepth="0"/>
+                </Rectangle.Effect>
+            </Rectangle>
+            <Rectangle x:Name="Bar4" Width="4" Height="10" Fill="#00FF88" Margin="1.5" RadiusX="2" RadiusY="2">
+                <Rectangle.Effect>
+                    <DropShadowEffect Color="#00FF88" Opacity="0.8" BlurRadius="4" ShadowDepth="0"/>
+                </Rectangle.Effect>
+            </Rectangle>
+            <Rectangle x:Name="Bar5" Width="4" Height="6" Fill="#00FF88" Margin="1.5" RadiusX="2" RadiusY="2">
+                <Rectangle.Effect>
+                    <DropShadowEffect Color="#00FF88" Opacity="0.8" BlurRadius="4" ShadowDepth="0"/>
+                </Rectangle.Effect>
+            </Rectangle>
+        </StackPanel>
+    </Grid>
+</Window>
