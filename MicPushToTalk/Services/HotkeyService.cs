@@ -85,10 +85,13 @@ public class LowLevelKeyboardHook : IDisposable
     private const int WH_KEYBOARD_LL = 13;
     private const int WM_KEYDOWN = 0x0100;
     private const int WM_KEYUP = 0x0101;
+    private const int WM_SYSKEYDOWN = 0x0104;
+    private const int WM_SYSKEYUP = 0x0105;
 
     private LowLevelKeyboardProc? _proc;
     private IntPtr _hookID = IntPtr.Zero;
     private int _targetKey;
+    private bool _suppressKey;
 
     public event EventHandler? KeyPressed;
     public event EventHandler? KeyReleased;
@@ -108,9 +111,10 @@ public class LowLevelKeyboardHook : IDisposable
     [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     private static extern IntPtr GetModuleHandle(string lpModuleName);
 
-    public void SetHook(int virtualKey)
+    public void SetHook(int virtualKey, bool suppressKey = true)
     {
         _targetKey = virtualKey;
+        _suppressKey = suppressKey;
         _proc = HookCallback;
         
         using var curProcess = System.Diagnostics.Process.GetCurrentProcess();
@@ -130,13 +134,28 @@ public class LowLevelKeyboardHook : IDisposable
             
             if (vkCode == _targetKey)
             {
-                if (wParam == (IntPtr)WM_KEYDOWN)
+                bool isKeyDown = wParam == (IntPtr)WM_KEYDOWN || wParam == (IntPtr)WM_SYSKEYDOWN;
+                bool isKeyUp = wParam == (IntPtr)WM_KEYUP || wParam == (IntPtr)WM_SYSKEYUP;
+
+                if (isKeyDown)
                 {
                     KeyPressed?.Invoke(this, EventArgs.Empty);
+                    
+                    // Suppress the key event to prevent it from reaching other applications
+                    if (_suppressKey)
+                    {
+                        return (IntPtr)1; // Block the key
+                    }
                 }
-                else if (wParam == (IntPtr)WM_KEYUP)
+                else if (isKeyUp)
                 {
                     KeyReleased?.Invoke(this, EventArgs.Empty);
+                    
+                    // Suppress the key event
+                    if (_suppressKey)
+                    {
+                        return (IntPtr)1; // Block the key
+                    }
                 }
             }
         }

@@ -84,8 +84,15 @@ public partial class SettingsWindow : Window
     {
         _viewModel.SaveSettings();
         
+        // Apply settings immediately without restart
+        var mainWindow = Application.Current.MainWindow as OverlayWindow;
+        if (mainWindow != null)
+        {
+            mainWindow.ApplySettings();
+        }
+        
         MessageBox.Show(
-            "Settings saved! Please restart the application for all changes to take effect.",
+            "Settings saved and applied successfully!",
             "Settings Saved",
             MessageBoxButton.OK,
             MessageBoxImage.Information);

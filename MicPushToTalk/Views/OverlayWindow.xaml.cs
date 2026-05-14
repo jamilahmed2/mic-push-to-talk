@@ -269,4 +269,26 @@ public partial class OverlayWindow : Window
     {
         CloseButton.Background = new SolidColorBrush(Color.FromArgb(96, 0, 0, 0));
     }
+
+    public void ApplySettings()
+    {
+        // Reload settings and apply them without restart
+        _viewModel.ReloadSettings();
+        
+        var settings = _viewModel.GetSettings();
+        
+        // Update window size
+        Width = settings.OverlaySize + 40;
+        Height = settings.OverlaySize + 40;
+        
+        // Update opacity
+        Opacity = settings.OverlayOpacity;
+        
+        // Update position if needed
+        Left = settings.OverlayX;
+        Top = settings.OverlayY;
+        
+        // Update visual state
+        UpdateVisualState(_viewModel.IsMuted);
+    }
 }

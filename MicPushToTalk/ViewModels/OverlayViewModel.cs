@@ -9,7 +9,7 @@ namespace MicPushToTalk.ViewModels;
 public partial class OverlayViewModel : ObservableObject, IDisposable
 {
     private readonly AudioService _audioService;
-    private readonly LowLevelKeyboardHook _keyboardHook;
+    private LowLevelKeyboardHook _keyboardHook;
     private readonly SettingsService _settingsService;
     private readonly TrayService _trayService;
     private AppSettings _settings;
@@ -38,10 +38,46 @@ public partial class OverlayViewModel : ObservableObject, IDisposable
         _audioService.SetMute(true);
         IsMuted = true;
         
-        // Setup keyboard hook
-        _keyboardHook.SetHook(_settings.HotkeyVirtualKey);
+        // Setup keyboard hook with key suppression enabled
+        _keyboardHook.SetHook(_settings.HotkeyVirtualKey, suppressKey: true);
         
         // Select microphone if specified
+        if (!string.IsNullOrEmpty(_settings.SelectedMicrophoneId))
+        {
+            _audioService.SelectMicrophone(_settings.SelectedMicrophoneId);
+        }
+    }
+
+    public void UpdateHotkey(int virtualKey)
+    {
+        // Dispose old hook
+        _keyboardHook.Dispose();
+        
+        // Create new hook with updated key
+        var newHook = new LowLevelKeyboardHook();
+        newHook.KeyPressed += OnHotkeyPressed;
+        newHook.KeyReleased += OnHotkeyReleased;
+        newHook.SetHook(virtualKey, suppressKey: true);
+        
+        // Update settings
+        _settings.HotkeyVirtualKey = virtualKey;
+        _settingsService.SaveSettings(_settings);
+    }
+
+    public void ReloadSettings()
+    {
+        _settings = _settingsService.LoadSettings();
+        
+        // Dispose old hook
+        _keyboardHook?.Dispose();
+        
+        // Create new hook with updated key
+        _keyboardHook = new LowLevelKeyboardHook();
+        _keyboardHook.KeyPressed += OnHotkeyPressed;
+        _keyboardHook.KeyReleased += OnHotkeyReleased;
+        _keyboardHook.SetHook(_settings.HotkeyVirtualKey, suppressKey: true);
+        
+        // Update microphone
         if (!string.IsNullOrEmpty(_settings.SelectedMicrophoneId))
         {
             _audioService.SelectMicrophone(_settings.SelectedMicrophoneId);
@@ -100,7 +136,7 @@ public partial class OverlayViewModel : ObservableObject, IDisposable
 
     public void Dispose()
     {
-        _keyboardHook.Dispose();
+        _keyboardHook?.Dispose();
         _audioService.Dispose();
     }
 }
