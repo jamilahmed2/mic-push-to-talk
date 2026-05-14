@@ -23,11 +23,12 @@ Double-click `MicPushToTalk.exe` to start the application.
 5. Click **Save**
 
 ### Step 5: Use It!
-- **Hold** your hotkey (default: Left Alt) to unmute your microphone
-- **Release** the key to mute again
+- **Press** your hotkey (default: Left Alt) to unmute your microphone
+- **Press again** to mute
 - The floating overlay shows your current status:
   - 🔴 Red = Muted
   - 🟢 Green = Active/Talking
+- Simple toggle: Press once to talk, press again to mute
 
 ## For Developers (Build from Source)
 
@@ -41,7 +42,7 @@ Double-click `MicPushToTalk.exe` to start the application.
 **Option 1: Using Build Script (Easiest)**
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/mic-push-to-talk.git
+git clone https://github.com/jamilahmed2/mic-push-to-talk.git
 cd mic-push-to-talk
 
 # Run the build script
@@ -80,11 +81,11 @@ dotnet publish MicPushToTalk\MicPushToTalk.csproj -c Release
 
 ### ⚙️ Settings
 - **Hotkey customization** - Any key or combination
-- **Push-to-talk or toggle mode** - Choose your preference
 - **Microphone selection** - Pick which mic to control
 - **Overlay customization** - Size, opacity, position
 - **Auto-start** - Launch with Windows
 - **Volume visualizer** - Real-time audio levels
+- **Toggle mode** - Press once to unmute, press again to mute
 
 ### 🎨 Visual States
 - **Muted** (default): Red mic icon with cross

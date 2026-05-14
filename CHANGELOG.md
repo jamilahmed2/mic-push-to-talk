@@ -1,6 +1,37 @@
 # Changelog - Mic Push-To-Talk
 
-## Version 1.1.0 (Latest)
+## Version 1.2.0 (Latest)
+
+### 🔄 Toggle Mode (Breaking Change)
+
+#### Changed Behavior
+- 🔄 **Changed**: Now uses toggle mode instead of push-to-talk
+- ✅ **Press once** to unmute (stays unmuted)
+- ✅ **Press again** to mute (stays muted)
+- ✅ **No more blinking** when holding key
+- ✅ **Key repeat events** are properly ignored
+
+#### Why This Change?
+- 🐛 **Fixed**: Blinking icon when holding hotkey
+- 🐛 **Fixed**: Key repeat causing multiple state changes
+- ✅ **Simpler**: Like a light switch - on/off
+- ✅ **Less fatigue**: No need to hold key down
+- ✅ **More reliable**: Predictable behavior
+
+#### Technical Details
+- Added `_isKeyCurrentlyPressed` flag to prevent key repeat
+- Removed `IsPushToTalkMode` setting (always toggle now)
+- Simplified hotkey handling logic
+- Better state management
+
+#### Migration
+- Existing settings are automatically updated
+- Old `IsPushToTalkMode` setting is ignored
+- No action required from users
+
+---
+
+## Version 1.1.0
 
 ### 🎨 UI/UX Improvements
 
@@ -90,7 +121,7 @@
 - 🎤 System-wide microphone mute/unmute
 - ⌨️ Global hotkey support (keyboard + mouse)
 - 🎯 Low latency (<10ms response time)
-- 🔄 Push-to-talk and toggle modes
+- 🔄 Simple toggle mode (press to unmute, press to mute)
 
 #### Overlay
 - 🪟 Always-on-top floating window

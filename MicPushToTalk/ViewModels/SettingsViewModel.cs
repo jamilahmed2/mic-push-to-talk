@@ -17,9 +17,6 @@ public partial class SettingsViewModel : ObservableObject
     private string _hotkeyDisplayName = "Left Alt";
 
     [ObservableProperty]
-    private bool _isPushToTalkMode = true;
-
-    [ObservableProperty]
     private double _overlaySize = 80;
 
     [ObservableProperty]
@@ -58,7 +55,6 @@ public partial class SettingsViewModel : ObservableObject
         HotkeyDisplayName = _settings.HotkeyDisplayName;
         HotkeyVirtualKey = _settings.HotkeyVirtualKey;
         HotkeyModifiers = _settings.HotkeyModifiers;
-        IsPushToTalkMode = _settings.IsPushToTalkMode;
         OverlaySize = _settings.OverlaySize;
         OverlayOpacity = _settings.OverlayOpacity;
         SnapToEdges = _settings.SnapToEdges;
@@ -87,7 +83,6 @@ public partial class SettingsViewModel : ObservableObject
         _settings.HotkeyDisplayName = HotkeyDisplayName;
         _settings.HotkeyVirtualKey = HotkeyVirtualKey;
         _settings.HotkeyModifiers = HotkeyModifiers;
-        _settings.IsPushToTalkMode = IsPushToTalkMode;
         _settings.OverlaySize = OverlaySize;
         _settings.OverlayOpacity = OverlayOpacity;
         _settings.SnapToEdges = SnapToEdges;

@@ -6,6 +6,10 @@ on:
       - 'v*'
   workflow_dispatch:
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   build:
     runs-on: windows-latest
@@ -60,30 +64,69 @@ jobs:
       with:
         files: ./MicPushToTalk-*.zip
         body: |
-          ## Mic Push-To-Talk ${{ github.ref_name }}
+          ## 🎤 Mic Push-To-Talk ${{ github.ref_name }}
           
-          ### Download
+          ### 📦 Download
           - **MicPushToTalk-${{ github.ref_name }}-win-x64.zip** - Portable version (no installation required)
           
-          ### What's New
-          See [CHANGELOG.md](CHANGELOG.md) for details.
+          ### ✨ What's New
+          - 🔄 **Toggle Mode**: Press once to unmute, press again to mute (no more holding keys!)
+          - 🎨 **Glassmorphism UI**: Modern, beautiful interface with smooth animations
+          - 🐛 **Fixed**: Hotkey no longer types in text fields
+          - 🐛 **Fixed**: No more blinking when holding key
+          - ⚡ **Live Settings**: Changes apply immediately without restart
+          - ✨ **Close Button**: Added to overlay (appears on hover)
+          - 🎯 **Draggable Settings**: Settings window can now be moved
           
-          ### Installation
-          1. Download the ZIP file
-          2. Extract to any folder
+          See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for full details.
+          
+          ### 🚀 Installation
+          1. Download the ZIP file above
+          2. Extract to any folder (e.g., `C:\Program Files\MicPushToTalk`)
           3. Run `MicPushToTalk.exe`
-          4. No .NET installation required!
+          4. **No .NET installation required!** (self-contained)
           
-          ### System Requirements
-          - Windows 10 (1809+) or Windows 11
-          - 64-bit (x64)
-          - ~100 MB disk space
+          ### 💻 System Requirements
+          - **OS**: Windows 10 (1809+) or Windows 11
+          - **Architecture**: 64-bit (x64)
+          - **Disk Space**: ~200 MB
+          - **RAM**: 50 MB minimum
+          - **Permissions**: Microphone access
           
-          ### Quick Start
-          - Default hotkey: **Left Alt**
-          - Hold to talk, release to mute
-          - Right-click tray icon for settings
+          ### 🎯 Quick Start
+          1. Launch the application
+          2. Default hotkey: **Left Alt**
+          3. **Press once** to unmute (green icon) 🟢
+          4. **Press again** to mute (red icon) 🔴
+          5. Right-click tray icon for settings
           
-          For full documentation, see [README.md](README.md)
+          ### 🎨 Features
+          - ✅ System-wide microphone toggle
+          - ✅ Global hotkey support (any key or mouse button)
+          - ✅ Always-on-top floating overlay
+          - ✅ Glassmorphism design with smooth animations
+          - ✅ Volume visualizer
+          - ✅ Draggable overlay with edge snapping
+          - ✅ Customizable size, opacity, and colors
+          - ✅ System tray integration
+          - ✅ Auto-start on boot option
+          
+          ### 📚 Documentation
+          - [README.md](https://github.com/${{ github.repository }}/blob/main/README.md) - Complete documentation
+          - [QUICK-START.md](https://github.com/${{ github.repository }}/blob/main/QUICK-START.md) - Quick start guide
+          - [INSTALLATION.md](https://github.com/${{ github.repository }}/blob/main/INSTALLATION.md) - Installation instructions
+          
+          ### 🐛 Known Issues
+          - Some fullscreen games may block the overlay (use borderless windowed mode)
+          - Certain anti-cheat systems may block keyboard hooks
+          
+          ### 💡 Tips
+          - Try **Caps Lock** or **Mouse Button 4** as hotkey for gaming
+          - Enable "Snap to edges" for easy positioning
+          - Use volume visualizer to see mic input levels
+          
+          ---
+          
+          **Enjoy your new microphone control!** 🎤✨
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

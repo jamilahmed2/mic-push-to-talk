@@ -25,7 +25,7 @@ A modern Windows desktop application for system-wide push-to-talk microphone con
 
 ### For Users (No Installation Required!)
 
-1. **Download** the latest release from [Releases](https://github.com/yourusername/mic-push-to-talk/releases)
+1. **Download** the latest release from [Releases](https://github.com/jamilahmed2/mic-push-to-talk/releases)
 2. **Extract** the ZIP file to any folder
 3. **Run** `MicPushToTalk.exe`
 4. **Done!** No .NET installation needed
@@ -36,7 +36,7 @@ See [QUICK-START.md](QUICK-START.md) for detailed instructions.
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/mic-push-to-talk.git
+git clone https://github.com/jamilahmed2/mic-push-to-talk.git
 cd mic-push-to-talk
 
 # Build self-contained executable
@@ -49,7 +49,7 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for build options and distribution guide.
 
 ## 📦 Download
 
-**Latest Release:** [v1.0.0](https://github.com/yourusername/mic-push-to-talk/releases/latest)
+**Latest Release:** [v1.0.0](https://github.com/jamilahmed2/mic-push-to-talk/releases/latest)
 
 - **Portable Version** (Recommended): `MicPushToTalk-v1.0.0-win-x64.zip` (~50 MB compressed, ~174 MB extracted)
 - No installation required
@@ -90,16 +90,22 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for build options and distribution guide.
 ### First Launch
 
 1. The overlay will appear as a floating circular button
-2. By default, hold **Left Alt** to unmute your microphone
-3. Release the key to mute again
+2. By default, press **Left Alt** to toggle your microphone
+3. Press again to mute
 4. Right-click the tray icon to access settings
+
+### How It Works
+
+- **Press hotkey once** → Microphone unmutes (green icon)
+- **Press hotkey again** → Microphone mutes (red icon)
+- **Click overlay** → Manually toggle mute state
+- Simple on/off toggle like a light switch
 
 ### Customization
 
 Open Settings to configure:
 
-- **Hotkey**: Change the push-to-talk key
-- **Mode**: Switch between Push-To-Talk and Toggle mode
+- **Hotkey**: Change the toggle key
 - **Microphone**: Select which microphone to control
 - **Overlay Size**: Adjust the button size (60-150px)
 - **Overlay Opacity**: Change transparency (30-100%)
@@ -210,7 +216,7 @@ MicPushToTalk/
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/mic-push-to-talk.git
+git clone https://github.com/jamilahmed2/mic-push-to-talk.git
 cd mic-push-to-talk
 
 # Restore packages

@@ -13,6 +13,7 @@ public partial class OverlayViewModel : ObservableObject, IDisposable
     private readonly SettingsService _settingsService;
     private readonly TrayService _trayService;
     private AppSettings _settings;
+    private bool _isKeyCurrentlyPressed = false;
 
     [ObservableProperty]
     private bool _isMuted = true;
@@ -86,22 +87,19 @@ public partial class OverlayViewModel : ObservableObject, IDisposable
 
     private void OnHotkeyPressed(object? sender, EventArgs e)
     {
-        if (_settings.IsPushToTalkMode)
-        {
-            SetMicrophoneState(false); // Unmute
-        }
-        else
-        {
-            ToggleMute(); // Toggle mode
-        }
+        // Prevent key repeat events from triggering multiple times
+        if (_isKeyCurrentlyPressed)
+            return;
+
+        _isKeyCurrentlyPressed = true;
+
+        // Always toggle mode - one press to activate, another to deactivate
+        ToggleMute();
     }
 
     private void OnHotkeyReleased(object? sender, EventArgs e)
     {
-        if (_settings.IsPushToTalkMode)
-        {
-            SetMicrophoneState(true); // Mute
-        }
+        _isKeyCurrentlyPressed = false;
     }
 
     public void ToggleMute()

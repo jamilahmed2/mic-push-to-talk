@@ -4,7 +4,7 @@
 #define MyAppName "Mic Push-To-Talk"
 #define MyAppVersion "1.0.0"
 #define MyAppPublisher "Your Company"
-#define MyAppURL "https://github.com/yourusername/mic-push-to-talk"
+#define MyAppURL "https://github.com/jamilahmed2/mic-push-to-talk"
 #define MyAppExeName "MicPushToTalk.exe"
 
 [Setup]

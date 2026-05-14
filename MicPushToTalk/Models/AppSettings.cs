@@ -10,7 +10,6 @@ public class AppSettings
     public string ActiveColor { get; set; } = "#00FF88";
     public string InactiveColor { get; set; } = "#FF4444";
     public bool StartOnBoot { get; set; } = false;
-    public bool IsPushToTalkMode { get; set; } = true;
     public double OverlayX { get; set; } = 100;
     public double OverlayY { get; set; } = 100;
     public bool SnapToEdges { get; set; } = true;
