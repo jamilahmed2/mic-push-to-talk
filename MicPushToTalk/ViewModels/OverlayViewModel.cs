@@ -49,6 +49,22 @@ public partial class OverlayViewModel : ObservableObject, IDisposable
         }
     }
 
+    public void EnableHotkey()
+    {
+        if (_keyboardHook != null)
+        {
+            _keyboardHook.SetHook(_settings.HotkeyVirtualKey, suppressKey: true);
+        }
+    }
+
+    public void DisableHotkey()
+    {
+        _keyboardHook?.Dispose();
+        _keyboardHook = new LowLevelKeyboardHook();
+        _keyboardHook.KeyPressed += OnHotkeyPressed;
+        _keyboardHook.KeyReleased += OnHotkeyReleased;
+    }
+
     public void UpdateHotkey(int virtualKey)
     {
         // Dispose old hook

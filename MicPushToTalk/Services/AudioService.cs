@@ -82,6 +82,7 @@ public class AudioService : IDisposable
         {
             if (_currentDevice == null)
             {
+                System.Diagnostics.Debug.WriteLine("SetMute: Device is null, initializing...");
                 InitializeDefaultDevice();
             }
 
@@ -89,7 +90,12 @@ public class AudioService : IDisposable
             {
                 _currentDevice.AudioEndpointVolume.Mute = mute;
                 _isMuted = mute;
+                System.Diagnostics.Debug.WriteLine($"AudioService.SetMute: {(mute ? "MUTED" : "UNMUTED")}");
                 MuteStateChanged?.Invoke(this, mute);
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("SetMute: Failed - device is null!");
             }
         }
         catch (Exception ex)
@@ -127,12 +133,19 @@ public class AudioService : IDisposable
         {
             if (_currentDevice == null)
             {
+                System.Diagnostics.Debug.WriteLine("GetCurrentVolume: Device is null, initializing...");
                 InitializeDefaultDevice();
             }
 
             if (_currentDevice != null)
             {
-                return _currentDevice.AudioMeterInformation.MasterPeakValue;
+                var peakValue = _currentDevice.AudioMeterInformation.MasterPeakValue;
+                System.Diagnostics.Debug.WriteLine($"AudioService.GetCurrentVolume: {peakValue:F3}");
+                return peakValue;
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("GetCurrentVolume: Device is still null after init!");
             }
         }
         catch (Exception ex)

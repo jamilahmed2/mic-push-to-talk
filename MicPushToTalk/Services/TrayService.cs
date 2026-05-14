@@ -71,9 +71,24 @@ public class TrayService : IDisposable
         var mainWindow = Application.Current.MainWindow;
         if (mainWindow != null)
         {
-            mainWindow.Visibility = mainWindow.Visibility == Visibility.Visible 
-                ? Visibility.Hidden 
-                : Visibility.Visible;
+            if (mainWindow.Visibility == Visibility.Visible)
+            {
+                // Hiding - disable hotkey
+                if (mainWindow is OverlayWindow overlayWindow)
+                {
+                    overlayWindow.DisableHotkey();
+                }
+                mainWindow.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                // Showing - enable hotkey
+                if (mainWindow is OverlayWindow overlayWindow)
+                {
+                    overlayWindow.EnableHotkey();
+                }
+                mainWindow.Visibility = Visibility.Visible;
+            }
         }
     }
 

@@ -29,7 +29,7 @@ public partial class OverlayWindow : Window
         // Volume visualizer timer
         _volumeTimer = new DispatcherTimer
         {
-            Interval = TimeSpan.FromMilliseconds(50)
+            Interval = TimeSpan.FromMilliseconds(100) // Update 10 times per second
         };
         _volumeTimer.Tick += VolumeTimer_Tick;
 
@@ -50,6 +50,22 @@ public partial class OverlayWindow : Window
         Height = settings.OverlaySize + 40;
         
         UpdateVisualState(_viewModel.IsMuted);
+        
+        // Subscribe to visibility changes
+        IsVisibleChanged += OverlayWindow_IsVisibleChanged;
+    }
+
+    private void OverlayWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+        // Enable/disable hotkey based on visibility
+        if (IsVisible)
+        {
+            _viewModel.EnableHotkey();
+        }
+        else
+        {
+            _viewModel.DisableHotkey();
+        }
     }
 
     private void OverlayWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
@@ -75,12 +91,17 @@ public partial class OverlayWindow : Window
             AnimateOpacity(GlowRing, 0, duration);
             AnimateScale(MainCircle, 1.0, duration);
             
-            _volumeTimer.Stop();
-            VolumeVisualizer.Opacity = 0;
+            // Stop timer and hide visualizer
+            if (_volumeTimer.IsEnabled)
+            {
+                _volumeTimer.Stop();
+            }
+            AnimateOpacity(VolumeVisualizer, 0, TimeSpan.FromMilliseconds(200));
         }
         else
         {
             // Active state - green/cyan
+            System.Diagnostics.Debug.WriteLine("UpdateVisualState: ACTIVE (unmuted)");
             AnimateColor(MicIcon, System.Windows.Shapes.Path.FillProperty, Color.FromRgb(0, 255, 136), duration);
             AnimateOpacity(MuteLine, 0, duration);
             AnimateGlow();
@@ -88,8 +109,24 @@ public partial class OverlayWindow : Window
             
             if (_viewModel.GetSettings().ShowVolumeVisualizer)
             {
-                _volumeTimer.Start();
-                VolumeVisualizer.Opacity = 1;
+                System.Diagnostics.Debug.WriteLine("  -> Starting volume visualizer");
+                // Show visualizer immediately
+                AnimateOpacity(VolumeVisualizer, 1, TimeSpan.FromMilliseconds(300));
+                
+                // Start the timer to update volume bars
+                if (!_volumeTimer.IsEnabled)
+                {
+                    System.Diagnostics.Debug.WriteLine("  -> Starting timer");
+                    _volumeTimer.Start();
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("  -> Timer already running");
+                }
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("  -> Volume visualizer disabled in settings");
             }
         }
     }
@@ -161,8 +198,41 @@ public partial class OverlayWindow : Window
 
     private void VolumeTimer_Tick(object? sender, EventArgs e)
     {
-        var volume = _viewModel.GetCurrentVolume();
-        AnimateVolumeBars(volume);
+        try
+        {
+            // Check if mic is actually unmuted
+            var isMuted = _viewModel.IsMuted;
+            if (isMuted)
+            {
+                System.Diagnostics.Debug.WriteLine("Timer running but mic is muted!");
+                _volumeTimer.Stop();
+                return;
+            }
+
+            var volume = _viewModel.GetCurrentVolume();
+            
+            // Debug output to see if we're getting volume data
+            System.Diagnostics.Debug.WriteLine($"Volume: {volume:F3} (amplified: {Math.Min(1.0f, volume * 5.0f):F3})");
+            
+            // If no volume detected, create a test animation to verify bars work
+            if (volume < 0.001f)
+            {
+                // Create a fake pulsing animation to test if bars can animate
+                var testVolume = (float)(Math.Sin(DateTime.Now.Millisecond / 1000.0 * Math.PI * 2) + 1) / 2;
+                System.Diagnostics.Debug.WriteLine($"  -> No mic input, using test animation: {testVolume:F3}");
+                AnimateVolumeBars(testVolume * 0.5f); // Use test animation
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine($"  -> Animating bars with real volume {volume}");
+                AnimateVolumeBars(volume);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error updating volume: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+        }
     }
 
     private void AnimateVolumeBars(float volume)
@@ -170,13 +240,20 @@ public partial class OverlayWindow : Window
         var bars = new[] { Bar1, Bar2, Bar3, Bar4, Bar5 };
         var heights = new[] { 6.0, 10.0, 14.0, 10.0, 6.0 };
         
+        // Amplify the volume for better visualization
+        // MasterPeakValue returns 0.0 to 1.0, but typical speech is around 0.1-0.3
+        // So we amplify it: multiply by 5 to make it more visible
+        var amplifiedVolume = Math.Min(1.0f, volume * 5.0f);
+        
         for (int i = 0; i < bars.Length; i++)
         {
-            var targetHeight = heights[i] * (0.3 + volume * 0.7);
+            // Calculate target height: minimum 30% of bar height, up to 100%
+            var targetHeight = heights[i] * (0.3 + amplifiedVolume * 0.7);
+            
             var animation = new DoubleAnimation
             {
                 To = targetHeight,
-                Duration = TimeSpan.FromMilliseconds(100),
+                Duration = TimeSpan.FromMilliseconds(80),
                 EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
             };
             bars[i].BeginAnimation(HeightProperty, animation);
@@ -271,6 +348,9 @@ public partial class OverlayWindow : Window
 
     private void CloseButton_Click(object sender, RoutedEventArgs e)
     {
+        // Disable hotkey when hiding overlay
+        _viewModel.DisableHotkey();
+        
         // Hide the overlay instead of closing the app
         Hide();
     }
@@ -322,5 +402,15 @@ public partial class OverlayWindow : Window
         
         // Update visual state
         UpdateVisualState(_viewModel.IsMuted);
+    }
+
+    public void EnableHotkey()
+    {
+        _viewModel.EnableHotkey();
+    }
+
+    public void DisableHotkey()
+    {
+        _viewModel.DisableHotkey();
     }
 }

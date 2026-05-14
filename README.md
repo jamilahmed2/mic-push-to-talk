@@ -7,6 +7,27 @@ A modern Windows desktop application for system-wide push-to-talk microphone con
 ![.NET](https://img.shields.io/badge/.NET-8.0-purple)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
+## 📸 Screenshots
+
+<div align="center">
+
+### Overlay States
+
+| Muted (Default) | Active (Talking) |
+|:---------------:|:----------------:|
+| ![Muted State](screenshots/mute.png) | ![Active State](screenshots/image.png) |
+| 🔴 Red icon with cross | 🟢 Green glowing icon with pulse |
+
+### Settings Window
+
+![Settings Window](screenshots/settings.png)
+
+*Modern glassmorphism UI with customizable options*
+
+</div>
+
+---
+
 ## ✨ Features
 
 - **System-Wide Push-To-Talk**: Control your microphone from any application
