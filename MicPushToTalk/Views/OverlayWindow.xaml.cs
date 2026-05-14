@@ -241,17 +241,32 @@ public partial class OverlayWindow : Window
     protected override void OnMouseEnter(MouseEventArgs e)
     {
         base.OnMouseEnter(e);
-        // Show close button on hover
-        var fadeIn = new DoubleAnimation(1, TimeSpan.FromMilliseconds(200));
+        // Show close button on hover with smooth fade in
+        var fadeIn = new DoubleAnimation
+        {
+            To = 1,
+            Duration = TimeSpan.FromMilliseconds(150),
+            EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
+        };
         CloseButton.BeginAnimation(OpacityProperty, fadeIn);
     }
 
     protected override void OnMouseLeave(MouseEventArgs e)
     {
         base.OnMouseLeave(e);
-        // Hide close button when not hovering
-        var fadeOut = new DoubleAnimation(0, TimeSpan.FromMilliseconds(200));
-        CloseButton.BeginAnimation(OpacityProperty, fadeOut);
+        
+        // Only hide if mouse is not over the close button
+        if (!CloseButton.IsMouseOver)
+        {
+            var fadeOut = new DoubleAnimation
+            {
+                To = 0,
+                Duration = TimeSpan.FromMilliseconds(200),
+                BeginTime = TimeSpan.FromMilliseconds(300), // Delay before hiding
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseIn }
+            };
+            CloseButton.BeginAnimation(OpacityProperty, fadeOut);
+        }
     }
 
     private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -262,12 +277,29 @@ public partial class OverlayWindow : Window
 
     private void CloseButton_MouseEnter(object sender, MouseEventArgs e)
     {
-        CloseButton.Background = new SolidColorBrush(Color.FromArgb(160, 255, 68, 68));
+        // Keep button visible and change to red on hover
+        CloseButton.BeginAnimation(OpacityProperty, null); // Stop any fade out animation
+        CloseButton.Opacity = 1;
+        CloseButton.Background = new SolidColorBrush(Color.FromArgb(200, 255, 68, 68));
     }
 
     private void CloseButton_MouseLeave(object sender, MouseEventArgs e)
     {
-        CloseButton.Background = new SolidColorBrush(Color.FromArgb(96, 0, 0, 0));
+        // Return to normal color
+        CloseButton.Background = new SolidColorBrush(Color.FromArgb(128, 0, 0, 0));
+        
+        // Start fade out after a delay if mouse is not over the window
+        if (!IsMouseOver)
+        {
+            var fadeOut = new DoubleAnimation
+            {
+                To = 0,
+                Duration = TimeSpan.FromMilliseconds(200),
+                BeginTime = TimeSpan.FromMilliseconds(300),
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseIn }
+            };
+            CloseButton.BeginAnimation(OpacityProperty, fadeOut);
+        }
     }
 
     public void ApplySettings()

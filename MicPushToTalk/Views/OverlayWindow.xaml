@@ -15,18 +15,18 @@
         MouseDown="Window_MouseDown">
     
     <Grid>
-        <!-- Close Button (top-right) -->
+        <!-- Close Button (top-right, inside the circle) -->
         <Button x:Name="CloseButton"
                 Content="✕"
-                Width="24" Height="24"
+                Width="28" Height="28"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
-                Margin="0,-5,-5,0"
-                FontSize="12"
+                Margin="0,8,8,0"
+                FontSize="14"
                 FontWeight="Bold"
                 Foreground="White"
-                Background="#60000000"
-                BorderBrush="#80FFFFFF"
+                Background="#80000000"
+                BorderBrush="#60FFFFFF"
                 BorderThickness="1"
                 Cursor="Hand"
                 Opacity="0"
@@ -41,9 +41,9 @@
                                 <Border Background="{TemplateBinding Background}"
                                         BorderBrush="{TemplateBinding BorderBrush}"
                                         BorderThickness="{TemplateBinding BorderThickness}"
-                                        CornerRadius="12">
+                                        CornerRadius="14">
                                     <Border.Effect>
-                                        <DropShadowEffect Color="Black" Opacity="0.5" BlurRadius="8" ShadowDepth="2"/>
+                                        <DropShadowEffect Color="Black" Opacity="0.6" BlurRadius="10" ShadowDepth="2"/>
                                     </Border.Effect>
                                     <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
